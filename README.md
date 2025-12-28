@@ -33,11 +33,3 @@ Challenges included handling **state persistence across sessions**, designing a 
 - **Features:** Modal UI, dynamic content rendering, pseudo real-time chat, responsive grid layout  
 
 ---
-
----
-
-### Project Media
-Include screenshots or demo video links here to showcase your project visually. For example:  
-
-- Screenshot of the dashboard: `![Dashboard](link_to_image.png)`  
-- Demo video: [YouTube Demo](link_to_video)
