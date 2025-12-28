@@ -4,136 +4,347 @@
 <meta charset="UTF-8">
 <title>StudentHub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-/* Include your CSS from previous HTML, or keep minimal */
-body{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;}
-input, button{padding:8px;margin:5px;}
-#chatBox{height:200px;overflow-y:scroll;border:1px solid #fff;padding:5px;}
+:root{
+  --bg:#0b0f14;
+  --card:#0f1623;
+  --teal:#2dd4bf;
+  --orange:#fb923c;
+  --muted:#94a3b8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family: Inter, Arial, sans-serif;
+  background: radial-gradient(circle at top,#0f172a,#020617);
+  color:#e5e7eb;
+  padding-top:50px; 
+  transition: padding-top 0.3s;
+}
+
+/* NOTIFICATION BAR */
+#notification{
+  background:var(--orange);
+  color:#fff;
+  text-align:center;
+  padding:10px 20px;
+  font-weight:bold;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:200;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  animation:slideDown 0.5s;
+}
+#notification span{cursor:pointer;}
+@keyframes slideDown{
+  from {top:-50px; opacity:0;}
+  to {top:0; opacity:1;}
+}
+
+/* NAVBAR */
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 40px;
+  background:#020617cc;
+  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+nav h1{color:var(--teal);font-size:20px;}
+nav a{color:#cbd5f5;margin:0 12px;text-decoration:none;}
+nav button{background:var(--teal);border:none;padding:8px 16px;border-radius:999px;cursor:pointer;}
+
+/* HERO */
+.hero{text-align:center;padding:90px 20px;}
+.hero span{color:var(--teal);}
+.hero h2{font-size:52px;margin-bottom:20px;}
+.hero p{color:var(--muted);max-width:600px;margin:auto;}
+
+/* SECTIONS */
+section{padding:80px 40px;}
+.section-title{text-align:center;margin-bottom:40px;}
+.section-title h3{font-size:38px;}
+.section-title span{color:var(--teal);}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;max-width:1100px;margin:auto;}
+.card{
+  background:var(--card);
+  padding:24px;
+  border-radius:18px;
+  border:1px solid #1e293b;
+  cursor:pointer;
+  transition:0.3s;
+}
+.card:hover{transform:scale(1.05);}
+.card h4{margin-bottom:10px;}
+.card p{color:var(--muted);font-size:14px;}
+.tag{background:#3b0f0f;color:#f87171;padding:4px 10px;border-radius:999px;font-size:12px;display:inline-block;}
+
+/* MODAL */
+.modal{display:none;position:fixed;z-index:100;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;}
+.modal-content{background:var(--card);padding:30px;border-radius:18px;max-width:600px;width:90%;text-align:center;overflow:auto;max-height:90vh;}
+.close-btn{background:var(--teal);border:none;color:#fff;padding:8px 16px;margin-top:20px;border-radius:999px;cursor:pointer;}
+input, select, textarea{padding:8px 12px;margin:6px 0;width:90%;border-radius:6px;border:none;background:#1e293b;color:#fff;}
+button.feature-btn{padding:10px 20px;margin-top:12px;background:var(--orange);border:none;color:#fff;border-radius:999px;cursor:pointer;}
+table{width:100%;margin-top:15px;border-collapse:collapse;}
+th,td{padding:8px;border-bottom:1px solid #1e293b;text-align:left;}
+
+/* FOOTER */
+footer{padding:40px;text-align:center;color:var(--muted);}
 </style>
 </head>
 <body>
 
-<h1>StudentHub</h1>
-
-<!-- LOGIN -->
-<div id="loginDiv">
-  <h2>Login</h2>
-  <input id="email" placeholder="Email" type="email"/>
-  <input id="password" placeholder="Password" type="password"/>
-  <button onclick="login()">Login</button>
-  <button onclick="showRegister()">Register</button>
+<!-- NOTIFICATION -->
+<div id="notification">
+  🎉 Welcome to StudentHub! Check out new gigs and community updates.
+  <span onclick="document.getElementById('notification').style.display='none'">✖</span>
 </div>
 
-<!-- REGISTER -->
-<div id="registerDiv" style="display:none">
-  <h2>Register</h2>
-  <input id="regName" placeholder="Username"/>
-  <input id="regEmail" placeholder="Email"/>
-  <input id="regPass" placeholder="Password" type="password"/>
-  <button onclick="register()">Register</button>
-  <button onclick="showLogin()">Back</button>
+<!-- NAVBAR -->
+<nav>
+  <h1>StudentHub</h1>
+  <div>
+    <a href="#budget">Budget</a>
+    <a href="#gigs">Gigs</a>
+    <a href="#community">Community</a>
+  </div>
+  <button>Get Started</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h2>Your Campus Life, <span>Simplified</span></h2>
+  <p>Manage your budget, earn through gigs, and connect with peers who get it. Built for students, by students.</p>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none">
-  <h2>Welcome <span id="username"></span></h2>
-  <button onclick="logout()">Logout</button>
+<!-- BUDGET -->
+<section id="budget">
+  <div class="section-title">
+    <h3>Money Management, <span>Student Style</span></h3>
+    <p class="muted">Designed for irregular income and campus life.</p>
+  </div>
+  <div class="grid">
+    <div class="card" data-feature="Smart Budgeting"><h4>Smart Budgeting</h4><p>Track expenses and savings.</p></div>
+    <div class="card" data-feature="Savings Goals"><h4>Savings Goals</h4><p>Set targets and track progress.</p></div>
+    <div class="card" data-feature="Spending Insights"><h4>Spending Insights</h4><p>Get smart tips to save money.</p></div>
+    <div class="card" data-feature="Bill Reminders"><h4>Bill Reminders</h4><p>Never miss due dates.</p></div>
+    <div class="card" data-feature="Student Discounts"><h4>Student Discounts</h4><p>Curated deals for students.</p></div>
+    <div class="card" data-feature="Split Expenses"><h4>Split Expenses</h4><p>Share bills with roommates.</p></div>
+  </div>
+</section>
 
-  <h3>Budget</h3>
-  <input id="income" placeholder="Income" type="number"/>
-  <input id="food" placeholder="Food" type="number"/>
-  <input id="travel" placeholder="Travel" type="number"/>
-  <input id="books" placeholder="Books" type="number"/>
-  <input id="others" placeholder="Others" type="number"/>
-  <button onclick="saveBudget()">Save Budget</button>
-  <div id="budgetResult"></div>
+<!-- GIGS -->
+<section id="gigs">
+  <div class="section-title">
+    <h3>Quick Gigs, <span style="color:var(--orange)">Real Money</span></h3>
+    <p class="muted">Flexible work posted by your campus community.</p>
+  </div>
+  <div class="grid" id="gigsContainer"></div>
+</section>
 
-  <h3>Community Chat</h3>
-  <input id="channel" placeholder="Channel"/>
-  <button onclick="joinChannel()">Join</button>
-  <div id="chatBox"></div>
-  <input id="msgInput" placeholder="Message"/>
-  <button onclick="sendMessage()">Send</button>
+<!-- COMMUNITY -->
+<section id="community">
+  <div class="section-title">
+    <h3>Your Campus <span>Community</span></h3>
+    <p class="muted">Help, learn, and grow together.</p>
+  </div>
+  <div class="grid" id="communityContainer"></div>
+</section>
+
+<!-- MODAL -->
+<div class="modal" id="featureModal">
+  <div class="modal-content" id="modalContent">
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
 </div>
 
-<script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+<footer>
+  Built for Hackathons • StudentHub © 2025
+</footer>
+
+<!-- SOCKET.IO -->
+<script src="/socket.io/socket.io.js"></script>
+
 <script>
-const socket = io("http://localhost:5000");
-let currentChannel = "";
+// ===== SOCKET.IO =====
+const socket = io();
 
-function showRegister(){document.getElementById("loginDiv").style.display="none"; document.getElementById("registerDiv").style.display="block";}
-function showLogin(){document.getElementById("registerDiv").style.display="none"; document.getElementById("loginDiv").style.display="block";}
+// ===== DYNAMIC GIGS =====
+const gigsData = [
+  {title:"Calculus Tutor Needed", pay:"$25/hr", location:"Campus Library", schedule:"Flexible", urgent:true},
+  {title:"Event Photographer", pay:"$150", location:"Student Union", schedule:"Saturday", urgent:false},
+  {title:"Math Assignment Helper", pay:"$20/hr", location:"Online", schedule:"Flexible", urgent:false},
+  {title:"Campus Event Promoter", pay:"$50", location:"Student Union", schedule:"Friday", urgent:true},
+  {title:"Graphic Designer for Club Poster", pay:"$40", location:"Online", schedule:"Flexible", urgent:false}
+];
 
-async function register(){
-  const username=document.getElementById("regName").value;
-  const email=document.getElementById("regEmail").value;
-  const password=document.getElementById("regPass").value;
-  const res = await fetch("http://localhost:5000/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,email,password})});
-  alert("Registered! Now login."); showLogin();
+function renderGigs(){
+  const container = document.getElementById("gigsContainer");
+  container.innerHTML="";
+  gigsData.forEach(gig=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.feature=gig.title;
+    card.innerHTML=`${gig.urgent?'<span class="tag">Urgent</span>':''}<h4>${gig.title}</h4><p>${gig.pay} · ${gig.location} · ${gig.schedule}</p>`;
+    card.addEventListener("click",()=>{
+      document.getElementById("modalTitle").innerText=gig.title;
+      const modalBody=document.getElementById("modalBody");
+      showGigApplication(modalBody,gig.title);
+      document.getElementById("featureModal").style.display="flex";
+    });
+    container.appendChild(card);
+  });
 }
 
-async function login(){
-  const email=document.getElementById("email").value;
-  const password=document.getElementById("password").value;
-  const res = await fetch("http://localhost:5000/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
-  const data = await res.json();
-  if(data.token){
-    localStorage.setItem("token",data.token);
-    localStorage.setItem("username",data.username);
-    document.getElementById("username").innerText = data.username;
-    document.getElementById("loginDiv").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-  } else alert(data.error);
+// ===== DYNAMIC COMMUNITY =====
+const communityData=["Study Buddies","Peer Support","Q&A Forum","Career Connect"];
+function renderCommunity(){
+  const container=document.getElementById("communityContainer");
+  container.innerHTML="";
+  communityData.forEach(channel=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.feature=channel;
+    card.innerHTML=`<h4>${channel}</h4><p>Click to join and chat.</p>`;
+    card.addEventListener("click",()=>{
+      document.getElementById("modalTitle").innerText=channel;
+      const modalBody=document.getElementById("modalBody");
+      showCommunity(modalBody,channel);
+      document.getElementById("featureModal").style.display="flex";
+    });
+    container.appendChild(card);
+  });
 }
 
-function logout(){localStorage.clear(); location.reload();}
+// ===== MODAL HANDLING =====
+function closeModal(){document.getElementById("featureModal").style.display="none";}
+window.onclick=function(e){if(e.target==document.getElementById("featureModal"))closeModal();}
 
-async function saveBudget(){
-  const token = localStorage.getItem("token");
-  const income=Number(document.getElementById("income").value||0);
-  const food=Number(document.getElementById("food").value||0);
-  const travel=Number(document.getElementById("travel").value||0);
-  const books=Number(document.getElementById("books").value||0);
-  const others=Number(document.getElementById("others").value||0);
-  const savings = income-(food+travel+books+others);
+// ===== FEATURES (Budget/Gigs/Community) =====
 
-  const res = await fetch("http://localhost:5000/api/budget",{method:"POST",headers:{"Content-Type":"application/json","Authorization":token},body:JSON.stringify({income,expenses:{food,travel,books,others},savings})});
-  const data = await res.json();
-  document.getElementById("budgetResult").innerText = `Saved! Remaining savings: $${data.savings}`;
+// Smart Budgeting
+function showSmartBudgeting(container){
+  container.innerHTML=`<p>Enter your monthly income and expenses:</p>
+    <input type="number" id="income" placeholder="Monthly Income ($)" />
+    <input type="number" id="food" placeholder="Food ($)" />
+    <input type="number" id="travel" placeholder="Travel ($)" />
+    <input type="number" id="books" placeholder="Books ($)" />
+    <input type="number" id="others" placeholder="Other Expenses ($)" />
+    <button class="feature-btn" onclick="calculateBudget()">Calculate</button>
+    <div id="budgetResult"></div>`;
+}
+function calculateBudget(){
+  const income=parseFloat(document.getElementById("income").value)||0;
+  const food=parseFloat(document.getElementById("food").value)||0;
+  const travel=parseFloat(document.getElementById("travel").value)||0;
+  const books=parseFloat(document.getElementById("books").value)||0;
+  const others=parseFloat(document.getElementById("others").value)||0;
+  const totalExpenses=food+travel+books+others;
+  const savings=income-totalExpenses;
+  document.getElementById("budgetResult").innerHTML=`<h4>Summary:</h4>
+    <table>
+      <tr><td>Total Income:</td><td>$${income.toFixed(2)}</td></tr>
+      <tr><td>Total Expenses:</td><td>$${totalExpenses.toFixed(2)}</td></tr>
+      <tr><td>Remaining Savings:</td><td>$${savings.toFixed(2)}</td></tr>
+    </table>`;
+  localStorage.setItem("smartBudget",JSON.stringify({income,food,travel,books,others,savings}));
 }
 
-// ===== CHAT =====
-function joinChannel(){
-  currentChannel = document.getElementById("channel").value;
-  if(!currentChannel) return;
-  socket.emit("joinChannel", currentChannel);
-  document.getElementById("chatBox").innerHTML="";
-  fetchMessages();
+// Gig Applications (POST to backend)
+function showGigApplication(container,title){
+  container.innerHTML=`<p>Apply for <b>${title}</b>:</p>
+    <input type="text" id="appName" placeholder="Your Name" />
+    <input type="email" id="appEmail" placeholder="Email" />
+    <textarea id="appNote" placeholder="Note"></textarea>
+    <button class="feature-btn" onclick="submitGig('${title}')">Submit</button>
+    <div id="gigResult"></div>`;
+}
+function submitGig(title){
+  const name=document.getElementById("appName").value;
+  const email=document.getElementById("appEmail").value;
+  const note=document.getElementById("appNote").value;
+
+  fetch("/api/gigs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, name, email, note })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("gigResult").innerHTML="<p>Application submitted!</p>";
+  });
 }
 
-function sendMessage(){
-  const msg = document.getElementById("msgInput").value;
-  if(!msg || !currentChannel) return;
-  const username = localStorage.getItem("username");
-  socket.emit("sendMessage",{ channel: currentChannel, username, message: msg });
-  document.getElementById("msgInput").value="";
+// Community Chat (Real-time with Socket.io)
+function showCommunity(container,channel){
+  container.innerHTML=`<div id="messages"></div>
+    <input type="text" id="msgInput" placeholder="Type a message..." />
+    <button class="feature-btn" onclick="sendMessage('${channel}')">Send</button>`;
+  
+  socket.emit("joinChannel", channel);
+
+  // Load existing messages
+  fetch(`/api/chats/${channel}`)
+    .then(res => res.json())
+    .then(data => {
+      const messagesContainer = document.getElementById("messages");
+      data.forEach(msg => {
+        messagesContainer.innerHTML += `<p><b>${msg.username}:</b> ${msg.message}</p>`;
+      });
+    });
+
+  // Listen for new messages
+  socket.on("receiveMessage", (msg) => {
+    if(msg.channel === channel){
+      const messagesContainer = document.getElementById("messages");
+      messagesContainer.innerHTML += `<p><b>${msg.username}:</b> ${msg.message}</p>`;
+    }
+  });
 }
 
-socket.on("newMessage", data=>{
-  if(data.channel === currentChannel){
-    const chatBox = document.getElementById("chatBox");
-    chatBox.innerHTML += `<p><b>${data.username}</b>: ${data.message}</p>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+function sendMessage(channel){
+  const msgInput = document.getElementById("msgInput");
+  const message = msgInput.value;
+  if(!message) return;
+
+  const username = prompt("Enter your name") || "Anonymous";
+  socket.emit("sendMessage", { channel, username, message });
+  msgInput.value = "";
+}
+
+// ===== INITIALIZE =====
+document.addEventListener("DOMContentLoaded",()=>{
+  renderGigs();
+  renderCommunity();
+
+  document.querySelectorAll("#budget .card").forEach(card=>{
+    card.addEventListener("click",()=>{
+      const feature=card.dataset.feature;
+      document.getElementById("modalTitle").innerText=feature;
+      const modalBody=document.getElementById("modalBody");
+      switch(feature){
+        case "Smart Budgeting": showSmartBudgeting(modalBody); break;
+        case "Savings Goals": showSmartBudgeting(modalBody); break;
+        case "Spending Insights": showSmartBudgeting(modalBody); break;
+        case "Bill Reminders": showSmartBudgeting(modalBody); break;
+        case "Student Discounts": showSmartBudgeting(modalBody); break;
+        case "Split Expenses": showSmartBudgeting(modalBody); break;
+      }
+      document.getElementById("featureModal").style.display="flex";
+    });
+  });
 });
-
-async function fetchMessages(){
-  const token = localStorage.getItem("token");
-  const res = await fetch(`http://localhost:5000/api/chats/${currentChannel}`,{headers:{"Authorization":token}});
-  const chats = await res.json();
-  const chatBox = document.getElementById("chatBox");
-  chatBox.innerHTML = chats.map(c=>`<p><b>${c.username}</b>: ${c.message}</p>`).join("");
-}
 </script>
+
 </body>
 </html>
