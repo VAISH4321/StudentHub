@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>StudentHub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* Include your CSS from previous HTML, or keep minimal */
+body{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;}
+input, button{padding:8px;margin:5px;}
+#chatBox{height:200px;overflow-y:scroll;border:1px solid #fff;padding:5px;}
+</style>
+</head>
+<body>
+
+<h1>StudentHub</h1>
+
+<!-- LOGIN -->
+<div id="loginDiv">
+  <h2>Login</h2>
+  <input id="email" placeholder="Email" type="email"/>
+  <input id="password" placeholder="Password" type="password"/>
+  <button onclick="login()">Login</button>
+  <button onclick="showRegister()">Register</button>
+</div>
+
+<!-- REGISTER -->
+<div id="registerDiv" style="display:none">
+  <h2>Register</h2>
+  <input id="regName" placeholder="Username"/>
+  <input id="regEmail" placeholder="Email"/>
+  <input id="regPass" placeholder="Password" type="password"/>
+  <button onclick="register()">Register</button>
+  <button onclick="showLogin()">Back</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none">
+  <h2>Welcome <span id="username"></span></h2>
+  <button onclick="logout()">Logout</button>
+
+  <h3>Budget</h3>
+  <input id="income" placeholder="Income" type="number"/>
+  <input id="food" placeholder="Food" type="number"/>
+  <input id="travel" placeholder="Travel" type="number"/>
+  <input id="books" placeholder="Books" type="number"/>
+  <input id="others" placeholder="Others" type="number"/>
+  <button onclick="saveBudget()">Save Budget</button>
+  <div id="budgetResult"></div>
+
+  <h3>Community Chat</h3>
+  <input id="channel" placeholder="Channel"/>
+  <button onclick="joinChannel()">Join</button>
+  <div id="chatBox"></div>
+  <input id="msgInput" placeholder="Message"/>
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+<script>
+const socket = io("http://localhost:5000");
+let currentChannel = "";
+
+function showRegister(){document.getElementById("loginDiv").style.display="none"; document.getElementById("registerDiv").style.display="block";}
+function showLogin(){document.getElementById("registerDiv").style.display="none"; document.getElementById("loginDiv").style.display="block";}
+
+async function register(){
+  const username=document.getElementById("regName").value;
+  const email=document.getElementById("regEmail").value;
+  const password=document.getElementById("regPass").value;
+  const res = await fetch("http://localhost:5000/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,email,password})});
+  alert("Registered! Now login."); showLogin();
+}
+
+async function login(){
+  const email=document.getElementById("email").value;
+  const password=document.getElementById("password").value;
+  const res = await fetch("http://localhost:5000/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+  const data = await res.json();
+  if(data.token){
+    localStorage.setItem("token",data.token);
+    localStorage.setItem("username",data.username);
+    document.getElementById("username").innerText = data.username;
+    document.getElementById("loginDiv").style.display="none";
+    document.getElementById("dashboard").style.display="block";
+  } else alert(data.error);
+}
+
+function logout(){localStorage.clear(); location.reload();}
+
+async function saveBudget(){
+  const token = localStorage.getItem("token");
+  const income=Number(document.getElementById("income").value||0);
+  const food=Number(document.getElementById("food").value||0);
+  const travel=Number(document.getElementById("travel").value||0);
+  const books=Number(document.getElementById("books").value||0);
+  const others=Number(document.getElementById("others").value||0);
+  const savings = income-(food+travel+books+others);
+
+  const res = await fetch("http://localhost:5000/api/budget",{method:"POST",headers:{"Content-Type":"application/json","Authorization":token},body:JSON.stringify({income,expenses:{food,travel,books,others},savings})});
+  const data = await res.json();
+  document.getElementById("budgetResult").innerText = `Saved! Remaining savings: $${data.savings}`;
+}
+
+// ===== CHAT =====
+function joinChannel(){
+  currentChannel = document.getElementById("channel").value;
+  if(!currentChannel) return;
+  socket.emit("joinChannel", currentChannel);
+  document.getElementById("chatBox").innerHTML="";
+  fetchMessages();
+}
+
+function sendMessage(){
+  const msg = document.getElementById("msgInput").value;
+  if(!msg || !currentChannel) return;
+  const username = localStorage.getItem("username");
+  socket.emit("sendMessage",{ channel: currentChannel, username, message: msg });
+  document.getElementById("msgInput").value="";
+}
+
+socket.on("newMessage", data=>{
+  if(data.channel === currentChannel){
+    const chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML += `<p><b>${data.username}</b>: ${data.message}</p>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+});
+
+async function fetchMessages(){
+  const token = localStorage.getItem("token");
+  const res = await fetch(`http://localhost:5000/api/chats/${currentChannel}`,{headers:{"Authorization":token}});
+  const chats = await res.json();
+  const chatBox = document.getElementById("chatBox");
+  chatBox.innerHTML = chats.map(c=>`<p><b>${c.username}</b>: ${c.message}</p>`).join("");
+}
+</script>
+</body>
+</html>
