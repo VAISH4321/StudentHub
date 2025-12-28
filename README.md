@@ -1,35 +1,36 @@
-## About the Project
+# About StudentHub
 
-### Inspiration  
-As students ourselves, we noticed that campus life involves juggling budgets, finding short-term gigs, and staying connected with peers. Many students struggle with managing finances and accessing opportunities, especially when balancing classes and social life. This inspired us to create **StudentHub**, a one-stop platform to simplify campus living.  
+## Inspiration
+Student life can be chaotic with irregular income, tight schedules, and the need to stay connected. We wanted to create a **single platform** to help students **manage finances, earn through gigs, and interact with peers in real-time**.
 
-### What We Built  
-StudentHub is a web platform where students can:  
-- Track and manage budgets with **Smart Budgeting** and **Spending Insights**  
-- Set and monitor **Savings Goals**  
-- Receive **Bill Reminders** to never miss payments  
-- Access **Student Discounts**  
-- Split expenses easily among roommates or friends  
-- Find and apply to **Campus Gigs**  
-- Join **Community Channels** for study support, peer help, and discussions  
+## What We Built
+StudentHub integrates:
+- **Smart Budgeting** – Track expenses and income.
+- **Savings Goals & Bill Reminders** – Stay on top of finances.
+- **Gigs** – Discover and apply to short-term campus jobs.
+- **Community Chat** – Real-time communication using Socket.io.
+- **Split Expenses & Student Discounts** – Simplify payments and access deals.
 
-All these features are integrated in a **real-time interactive dashboard** with modal popups for a seamless experience.  
+### Frontend
+- HTML, CSS, JavaScript
+- Responsive and interactive UI
+- LocalStorage for offline caching
 
-### Challenges & Learnings  
-Building StudentHub taught us:  
-- How to **store dynamic data** using `localStorage` for offline support  
-- How to **handle interactive modals and dynamic content rendering**  
-- Techniques for building a **real-time pseudo chat system** for communities  
-- The importance of **UI/UX design** for accessibility and student-friendly interfaces  
+### Backend
+- Node.js + Express for REST APIs
+- MongoDB for storing budgets, gig applications, and chat history
+- Socket.io for real-time messaging
+- JWT for authentication
 
-Challenges included handling **state persistence across sessions**, designing a **responsive layout**, and simulating **multi-user interactions** in a single-page application.  
+## Challenges
+- Synchronizing real-time chat across multiple users.
+- Storing and retrieving data efficiently for budgets, gigs, and community messages.
+- Designing a simple, intuitive interface for all student users.
 
----
+## What We Learned
+- Full-stack integration strengthens user experience.
+- Real-time features increase engagement in a community platform.
+- MongoDB’s flexible schema is powerful for student-focused applications.
 
-### Built With  
-- **Languages:** HTML, CSS, JavaScript  
-- **Frameworks & Libraries:** None (Vanilla JS)  
-- **Storage:** LocalStorage (for offline data persistence)  
-- **Features:** Modal UI, dynamic content rendering, pseudo real-time chat, responsive grid layout  
-
----
+## Technical Summary
+Built with **HTML, CSS, JS, Node.js, Express, MongoDB, Socket.io, JWT**.
